@@ -1,3 +1,5 @@
 <Solution>
+  <Project Path="ImportCostPro.Application/ImportCostPro.Application.csproj" Id="0f4ffe69-bba9-43b0-98a8-9a712a6a33b1" />
   <Project Path="ImportCostPro/ImportCostPro.csproj" />
+  <Project Path="Persistance/Persistance.csproj" Id="91b8607b-ec04-42f3-ae86-55e5b5be279e" />
 </Solution>
