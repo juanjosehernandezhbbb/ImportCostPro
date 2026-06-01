@@ -12,7 +12,7 @@ using Persistence.Contexts;
 namespace Persistance.Migrations
 {
     [DbContext(typeof(ImportCostProContext))]
-    [Migration("20260531181513_InitialCreate")]
+    [Migration("20260601232830_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -218,13 +218,16 @@ namespace Persistance.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Correo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Direccion")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("Estado")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
-
-                    b.Property<string>("Gmail")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NombreRazonSocial")
                         .IsRequired()
@@ -321,7 +324,8 @@ namespace Persistance.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("estado")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("EstadoProceso");
 
                     b.Property<int>("modalidadTransporte")
                         .HasColumnType("int");
@@ -438,13 +442,16 @@ namespace Persistance.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Correo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Direccion")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("Estado")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
-
-                    b.Property<string>("Gmail")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("MonedaPrincipalID")
                         .HasColumnType("int");

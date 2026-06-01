@@ -26,11 +26,10 @@ namespace Persistance.EntityConfiguration
                 .IsRequired();
             builder.Property(x => x.modalidadTransporte)
                 .IsRequired();
-            //builder.Property(x=>x.EstadosOrden)
-            //    .IsRequired();
+            builder.Property(x => x.estado).HasColumnName("EstadoProceso")
+            .IsRequired();
 
 
-            
 
 
             #endregion
