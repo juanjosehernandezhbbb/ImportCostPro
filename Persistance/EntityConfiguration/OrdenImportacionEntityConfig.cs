@@ -20,24 +20,14 @@ namespace Persistance.EntityConfiguration
             builder.Property(x => x.NumeroOrden)
                 .IsRequired()
                 .HasMaxLength(150);
-            builder.Property(x => x.Importador)
-                .IsRequired()
-                .HasMaxLength(150);
-            builder.Property(x=>x.Proveedor)
-                .IsRequired()
-                .HasMaxLength(150);
-            builder.Property(x=>x.PaisOrigen)
-                .IsRequired()
-                .HasMaxLength(150);
-            builder.Property(x => x.Moneda)
-                .IsRequired()
-                .HasMaxLength(150);
+            // Navigation properties (Importador, Proveedor, PaisOrigen, Moneda) are configured
+            // via relationship mappings below. Do not configure them as scalar properties.
             builder.Property(x => x.FechaOrden)
                 .IsRequired();
             builder.Property(x => x.modalidadTransporte)
                 .IsRequired();
-            builder.Property(x=>x.EstadosOrden)
-                .IsRequired();
+            //builder.Property(x=>x.EstadosOrden)
+            //    .IsRequired();
 
 
             

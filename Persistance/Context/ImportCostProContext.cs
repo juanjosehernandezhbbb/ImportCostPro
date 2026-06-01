@@ -18,7 +18,6 @@ namespace Persistence.Contexts
         public DbSet<ResultadoCalculo> ResultadosCalculo { get; set; }
         public DbSet<DetalleCalculo> DetallesCalculo { get; set; }
         public DbSet<TasaCambio> TasaCambios { get; set; }
-        public DbSet<GastoImportacion> GastoImportaciones { get; set; }
         public DbSet<ConfiguracionImpuestos> ConfiguracionImpuestos { get; set; }
         public DbSet<CategoriaArancelaria> CategoriaArancelarias { get; set; }
 
