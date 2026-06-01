@@ -29,9 +29,6 @@ namespace Persistance.EntityConfiguration
             builder.Property(x => x.estado).HasColumnName("EstadoProceso")
             .IsRequired();
 
-
-
-
             #endregion
 
             #region Relationship Configurations
