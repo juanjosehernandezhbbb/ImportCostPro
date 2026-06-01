@@ -14,6 +14,8 @@ namespace Persistance.Entities
         public required int PaisID { get; set; } // fk - match Pais.Id (int)
         public Pais? Pais { get; set; }
         public string? Telefono { get; set; }
-        public string? Gmail { get; set; }
+        public string? Correo { get; set; }
+
+        public string? Direccion { get; set; }
     }
 }
