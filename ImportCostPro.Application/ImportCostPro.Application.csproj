@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="ImportCostPro.Application\ImportCostPro.Application.csproj" />
+  </ItemGroup>
+
 </Project>
