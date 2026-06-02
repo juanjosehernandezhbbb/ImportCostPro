@@ -1,0 +1,79 @@
+﻿@model IEnumerable<ImportCostPro.Models.PaisViewModel>
+
+@{
+    ViewData["Title"] = "Mantenimiento de Países";
+}
+
+<div class="container-fluid px-2">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800 fw-bold">Mantenimiento de Países</h1>
+            <p class="text-muted small mb-0">Administración de los países de origen para las importaciones.</p>
+        </div>
+        <a asp-controller="Pais" asp-action="Crear" class="btn btn-primary shadow-sm">
+            <i class="bi bi-plus-circle-fill me-2"></i>Agregar País
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm bg-white">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">ID</th>
+                            <th>Nombre del País</th>
+                            <th>Código ISO</th>
+                            <th>Estado</th>
+                            <th class="text-end pe-4">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var pais in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4 fw-bold text-muted">@pais.Id</td>
+                                    <td>@pais.Nombre</td>
+                                    <td><span class="badge bg-secondary font-monospace px-2 py-1">@pais.CodigoISO</span></td>
+                                    <td>
+                                        @if (pais.Activo)
+                                        {
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Activo</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">Inactivo</span>
+                                        }
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="btn-group" role="group">
+                                            <a asp-controller="Pais" asp-action="Editar" asp-route-id="@pais.Id" class="btn btn-sm btn-outline-secondary">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                            <a asp-controller="Pais" asp-action="Eliminar" asp-route-id="@pais.Id" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash3-fill"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    <i class="bi bi-folder-x display-4 mb-3 d-block"></i>
+                                    No hay registros de países configurados en el sistema.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+

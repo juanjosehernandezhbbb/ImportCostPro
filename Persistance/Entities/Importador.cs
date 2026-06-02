@@ -7,13 +7,14 @@ using Persistance.Common;
 
 namespace Persistance.Entities
 {
-    public class Importador: BasicEntity<int>
+    public class Importador : BasicEntity<int>
     {
         public required string NombreRazonSocial { get; set; }
         public required string RNC { get; set; }
-        public required int PaisID { get; set; } // fk - match Pais.Id (int)
+        public required int PaisID { get; set; } 
         public Pais? Pais { get; set; }
         public string? Telefono { get; set; }
-        public string? Gmail { get; set; }
+        public string? Correo { get; set; }
+        public string? Direccion { get; set; } 
     }
 }

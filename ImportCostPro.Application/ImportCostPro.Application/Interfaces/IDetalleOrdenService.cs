@@ -15,7 +15,7 @@ namespace ImportCostPro.Application.Interfaces
         Task<IEnumerable<DetalleOrdenDto>> ObtenerPorOrdenIdAsync(int ordenId);
 
         // Operaciones para manipular la lista de productos
-        Task<int> AgregarProductoAsync(AgregarProductoOrdenDto dto);
+        Task<int> AgregarProductoAsync(ImportCostPro.Application.DTOs.DetallesOrden.AgregarProductoOrdenDto dto);
         Task EliminarProductoAsync(int detalleId);
     }
 }

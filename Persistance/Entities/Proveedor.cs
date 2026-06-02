@@ -7,14 +7,17 @@ using Persistance.Common;
 
 namespace Persistance.Entities
 {
-    public class Proveedor: BasicEntity<int>
+    public class Proveedor : BasicEntity<int>
     {
         public required string Nombre { get; set; }
-        public required int PaisOrigenID { get; set; }//fk
-        public Pais PaisOrigen { get; set; }
-        public required int MonedaPrincipalID { get; set; }//fk
-        public Moneda MonedaPrincipal { get; set; }
+        public required int PaisOrigenID { get; set; }
+        public Pais? PaisOrigen { get; set; }
+        public required int MonedaPrincipalID { get; set; }
+        public Moneda? MonedaPrincipal { get; set; }
         public string? Telefono { get; set; }
-        public string? Gmail { get; set; }
+
+       
+        public string? Correo { get; set; } 
+        public string? Direccion { get; set; } 
     }
 }

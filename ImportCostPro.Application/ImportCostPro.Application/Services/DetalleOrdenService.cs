@@ -23,7 +23,8 @@ namespace ImportCostPro.Application.Services
             _context = context;
         }
 
-        public async Task<int> AgregarProductoAsync(AgregarProductoOrdenDto dto)
+        // CORRECCIÓN 1: Usamos la ruta completa del DTO para evitar la ambigüedad
+        public async Task<int> AgregarProductoAsync(ImportCostPro.Application.DTOs.DetallesOrden.AgregarProductoOrdenDto dto)
         {
             // 1. Buscamos la orden para verificar su estado
             var orden = await _context.OrdenesImportacion.FindAsync(dto.OrdenImportacionId);
@@ -36,7 +37,8 @@ namespace ImportCostPro.Application.Services
             }
 
             // 2. Validamos que el producto a agregar realmente exista y esté activo
-            var producto = await _context.Producto.FindAsync(dto.ProductoId); 
+            // CORRECCIÓN 2: Cambiamos _context.Producto a _context.Productos (en plural)
+            var producto = await _context.Set<Producto>().FindAsync(dto.ProductoId);
             if (producto == null) throw new Exception("El producto seleccionado no existe.");
 
             // (Opcional) Validar que el margen de ganancia sea lógico (ej. mayor o igual a 0 y menor que 100)
