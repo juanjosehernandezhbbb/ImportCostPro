@@ -37,8 +37,7 @@ namespace ImportCostPro.Application.Services
             }
 
             // 2. Validamos que el producto a agregar realmente exista y esté activo
-            // CORRECCIÓN 2: Cambiamos _context.Producto a _context.Productos (en plural)
-            var producto = await _context.Set<Producto>().FindAsync(dto.ProductoId);
+            var producto = await _context.Set<Producto>().FindAsync(dto.ProductoId); 
             if (producto == null) throw new Exception("El producto seleccionado no existe.");
 
             // (Opcional) Validar que el margen de ganancia sea lógico (ej. mayor o igual a 0 y menor que 100)

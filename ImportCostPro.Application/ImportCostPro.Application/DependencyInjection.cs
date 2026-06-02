@@ -27,6 +27,7 @@ namespace ImportCostPro.Application
             services.AddScoped<IPaisService, PaisService>();
             services.AddScoped<IImportadorService, ImportadorService>();
             services.AddScoped<IProveedorService, ProveedorService>();
+            services.AddScoped<ICategoriaArancelariaService, CategoriaArancelariaService>();
 
             return services;
         }

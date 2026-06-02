@@ -121,7 +121,8 @@ namespace Persistance.Migrations
                     RNC = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
                     PaisID = table.Column<int>(type: "int", nullable: false),
                     Telefono = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Gmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Correo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Direccion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Estado = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
                 },
                 constraints: table =>
@@ -180,7 +181,8 @@ namespace Persistance.Migrations
                     PaisOrigenID = table.Column<int>(type: "int", nullable: false),
                     MonedaPrincipalID = table.Column<int>(type: "int", nullable: false),
                     Telefono = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Gmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Correo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Direccion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Estado = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
                 },
                 constraints: table =>
@@ -213,7 +215,7 @@ namespace Persistance.Migrations
                     ProveedorID = table.Column<int>(type: "int", nullable: false),
                     FechaOrden = table.Column<DateTime>(type: "datetime2", nullable: false),
                     modalidadTransporte = table.Column<int>(type: "int", nullable: false),
-                    estado = table.Column<int>(type: "int", nullable: false),
+                    EstadoProceso = table.Column<int>(type: "int", nullable: false),
                     Estado = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>

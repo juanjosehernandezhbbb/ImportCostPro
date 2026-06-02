@@ -7,9 +7,4 @@
         public decimal PorcentajeTasaServicioAduanal { get; set; }
     }
 
-    public class ConfiguracionImpuestosCreateDto
-    {
-        public decimal PorcentajeITBIS { get; set; }
-        public decimal PorcentajeTasaServicioAduanal { get; set; }
-    }
 }
