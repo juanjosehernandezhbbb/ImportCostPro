@@ -47,6 +47,8 @@ namespace Persistance.EntityConfiguration
             builder.Property(x => x.TotalArancel).HasColumnType("decimal(18,2)");
             builder.Property(x => x.TotalITBIS).HasColumnType("decimal(18,2)");
             builder.Property(x => x.CostoTotalImportacion).HasColumnType("decimal(18,2)");
+            builder.Property(x => x.PorcentajeITBIS).HasColumnType("decimal(18,2)");
+            builder.Property(x => x.PorcentajeTasaAduanal).HasColumnType("decimal(18,2)");
         }
     }
 }

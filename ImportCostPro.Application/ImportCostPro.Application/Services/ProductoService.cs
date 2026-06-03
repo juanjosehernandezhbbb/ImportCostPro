@@ -60,7 +60,9 @@ namespace ImportCostPro.Application.Services
                     PaisOrigenID = p.PaisOrigenID,
                     NombrePaisOrigen = p.PaisOrigen != null ? p.PaisOrigen.Nombre : "N/A",
                     CategoriaArancelariaID = p.CategoriaArancelariaID,
-                    DescripcionCategoria = p.CategoriaArancelaria != null ? "Categoría asignada" : "N/A", // Ajusta según las propiedades reales de tu CategoriaArancelaria
+                    DescripcionCategoria = p.CategoriaArancelaria != null
+                  ? $"{p.CategoriaArancelaria.Nombre} ({p.CategoriaArancelaria.PorcentajeArancel}%)"
+                   : "N/A",
                     PesoUnitario = p.PesoUnitario,
                     Largo = p.Largo,
                     Ancho = p.Ancho,

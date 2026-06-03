@@ -1,34 +1,86 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ImportCostPro.Models;
+﻿using ImportCostPro.Application.DTOs.Proveedores;
+using ImportCostPro.Application.Interfaces;
+using Persistence.Contexts;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace ImportCostPro.Web.Controllers
 {
     public class ProveedorController : Controller
     {
-        public IActionResult Index()
-        {
-            var proveedoresSimulados = new List<ProveedorViewModel>
-            {
-                new ProveedorViewModel { Id = 1, Nombre = "Global Tech Logistics", PaisId = 2, NombrePais = "Estados Unidos", Correo = "sales@globaltech.com", Telefono = "+1-555-0144" },
-                new ProveedorViewModel { Id = 2, Nombre = "Shenzhen Manufacturing Ltd", PaisId = 3, NombrePais = "China", Correo = "export@shenzhenmfg.cn", Telefono = "+86-755-5555" }
-            };
+        private readonly IProveedorService _service;
+        private readonly ImportCostProContext _context;
 
-            return View(proveedoresSimulados);
+        public ProveedorController(IProveedorService service, ImportCostProContext context)
+        {
+            _service = service;
+            _context = context;
         }
+
+        private void CargarCatalogos(int? paisId = null, int? monedaId = null)
+        {
+            ViewBag.Paises = new SelectList(_context.Set<Persistance.Entities.Pais>().ToList(), "Id", "Nombre", paisId);
+            ViewBag.Monedas = new SelectList(_context.Set<Persistance.Entities.Moneda>().ToList(), "Id", "Nombre", monedaId);
+        }
+
+        public async Task<IActionResult> Index() => View(await _service.ObtenerTodosAsync());
 
         public IActionResult Crear()
         {
+            CargarCatalogos();
             return View();
         }
 
-        public IActionResult Editar(int id)
+        [HttpPost]
+        public async Task<IActionResult> Crear(CrearProveedorDto dto)
         {
-            return View();
+            if (!ModelState.IsValid)
+            {
+                CargarCatalogos(dto.PaisOrigenID, dto.MonedaPrincipalID);
+                return View(dto);
+            }
+            await _service.CrearAsync(dto);
+            return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Eliminar(int id)
+        public async Task<IActionResult> Editar(int id)
         {
-            return View();
+            var p = await _service.ObtenerPorIdAsync(id);
+            if (p == null) return NotFound();
+
+            var dto = new CrearProveedorDto
+            {
+                Nombre = p.Nombre,
+                Telefono = p.Telefono,
+                Correo = p.Correo,
+                Direccion = p.Direccion,
+                PaisOrigenID = p.PaisOrigenID,
+                MonedaPrincipalID = p.MonedaPrincipalID
+            };
+
+            CargarCatalogos(p.PaisOrigenID, p.MonedaPrincipalID);
+            return View(dto);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Editar(int id, CrearProveedorDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                CargarCatalogos(dto.PaisOrigenID, dto.MonedaPrincipalID);
+                return View(dto);
+            }
+
+            await _service.ActualizarAsync(id, dto);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EliminarConfirmado(int id)
+        {
+            await _service.EliminarAsync(id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

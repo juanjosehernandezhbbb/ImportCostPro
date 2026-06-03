@@ -1,11 +1,6 @@
-﻿using System.Text;
-using System.Threading.Tasks;
-using Persistance.Common;
-using Persistance.Enums;
-using Persistance.Entities;
+﻿using Persistance.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 
 namespace Persistance.EntityConfiguration
 {
@@ -13,9 +8,9 @@ namespace Persistance.EntityConfiguration
     {
         public void Configure(EntityTypeBuilder<GastoImportacion> builder)
         {
-            builder.HasKey(x => x.Id);
 
             builder.ToTable("GastosImportacion");
+            builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Monto)
                    .IsRequired()
@@ -24,24 +19,31 @@ namespace Persistance.EntityConfiguration
             builder.Property(x => x.FechaGasto)
                    .IsRequired();
 
-            builder.Property(x => x.OrdenImportacionID)
+            builder.Property(x => x.OrdenImportacionId)
                    .IsRequired();
 
             builder.Property(x => x.MonedaID)
                    .IsRequired();
 
+            builder.Property(x => x.MetodoDistribucion)
+                   .IsRequired();
+
+            builder.Property(x => x.TipoGasto)
+                   .IsRequired();
+
+            builder.Property(x => x.Estado)
+                   .IsRequired();
+
 
             builder.HasOne(x => x.OrdenImportacion)
-                   .WithMany() 
-                   .HasForeignKey(x => x.OrdenImportacionID)
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .WithMany(o => o.GastosImportacion)
+                   .HasForeignKey(x => x.OrdenImportacionId)
+                   .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(x => x.Moneda)
-                   .WithMany() 
+                   .WithMany()
                    .HasForeignKey(x => x.MonedaID)
                    .OnDelete(DeleteBehavior.Restrict);
-
-
         }
     }
 }

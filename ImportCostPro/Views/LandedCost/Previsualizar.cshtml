@@ -1,0 +1,45 @@
+﻿@model ImportCostPro.Application.DTOs.Calculos.ResultadoCalculoDto
+
+<h2>Previsualización de Landed Cost - Orden: @Model.NumeroOrden</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <p><strong>Total FOB:</strong> @Model.TotalFobConvertidoLocal</p>
+        <p><strong>Total Gastos (Flete+Seguro):</strong> @(Model.TotalFleteLocal + Model.TotalSeguroLocal)</p>
+        <h4 class="text-primary">Gran Total Landed Cost: @Model.GranTotalLandedCost</h4>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>CIF Local</th>
+            <th>Arancel</th>
+            <th>ITBIS</th>
+            <th>Costo Unitario Final</th>
+            <th>Precio Venta Sugerido</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.DetallesPorProducto)
+        {
+            <tr>
+                <td>@item.NombreProducto</td>
+                <td>@item.Cantidad</td>
+                <td>@item.ValorCifLocal</td>
+                <td>@item.ArancelAplicado</td>
+                <td>@item.ItbisAplicado</td>
+                <td>@item.CostoUnitarioFinalLocal</td>
+                <td>@item.PrecioVentaSugerido</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<form asp-action="GuardarOficial" method="post">
+    <input type="hidden" name="ordenId" value="@Model.OrdenImportacionId" />
+    <a asp-action="Index" asp-controller="OrdenImportacion" class="btn btn-secondary">Volver</a>
+    <button type="submit" class="btn btn-success">Confirmar y Cerrar Orden</button>
+</form>

@@ -52,7 +52,7 @@ namespace Persistance.EntityConfiguration
                 .HasForeignKey(x => x.ImportadorID);
             builder.HasMany(x => x.GastosImportacion)
     .WithOne(g => g.OrdenImportacion)
-    .HasForeignKey(g => g.OrdenImportacionID)
+    .HasForeignKey(g => g.OrdenImportacionId)
     .OnDelete(DeleteBehavior.Cascade);
 
 

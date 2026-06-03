@@ -1,0 +1,38 @@
+﻿@model ImportCostPro.Models.PaisViewModel
+
+@{
+    ViewData["Title"] = "Crear Nuevo País";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+            <h4 class="mb-0">Registrar nuevo país</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Crear" method="post">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Nombre" class="form-label"></label>
+                        <input asp-for="Nombre" class="form-control" placeholder="Ej: República Dominicana" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="CodigoISO" class="form-label"></label>
+                        <input asp-for="CodigoISO" class="form-control" placeholder="Ej: DO" />
+                        <span asp-validation-for="CodigoISO" class="text-danger"></span>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary px-4">Guardar País</button>
+                    <a asp-action="Index" class="btn btn-link">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

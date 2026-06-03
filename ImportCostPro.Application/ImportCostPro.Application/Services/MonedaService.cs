@@ -5,11 +5,8 @@ using Persistance.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using ImportCostPro.Application.DTOs.Moneda;
-
-
 
 namespace ImportCostPro.Application.Services
 {
@@ -26,7 +23,6 @@ namespace ImportCostPro.Application.Services
         {
             dto.CodigoISO = dto.CodigoISO.ToUpper().Trim();
 
-            // Usamos CodigoIso tal como lo escribió Persona 1 en su Entidad
             var existeIso = await _context.Monedas.AnyAsync(m => m.CodigoIso == dto.CodigoISO);
             if (existeIso)
                 throw new Exception("Ya existe una moneda registrada con este código ISO.");
@@ -40,15 +36,11 @@ namespace ImportCostPro.Application.Services
 
             var nuevaMoneda = new Moneda
             {
-                Id = 0,            
-                Estado = true,
                 Nombre = dto.Nombre,
                 CodigoIso = dto.CodigoISO,
                 Simbolo = dto.Simbolo,
-                EsMonedaLocal = dto.EsMonedaLocal
-                // Nota: Asumo que la propiedad 'Activo' o 'Estado' viene heredada 
-                // de BasicEntity<int> que hizo Persona 1. Si te marca error aquí,
-                
+                EsMonedaLocal = dto.EsMonedaLocal,
+                Estado = true // Asumiendo propiedad de BasicEntity
             };
 
             _context.Monedas.Add(nuevaMoneda);
@@ -66,23 +58,23 @@ namespace ImportCostPro.Application.Services
                     Nombre = m.Nombre,
                     CodigoISO = m.CodigoIso,
                     Simbolo = m.Simbolo,
-                    EsMonedaLocal = m.EsMonedaLocal ?? false
-                    // Activo = m.Activo // Descomentar si BasicEntity lo tiene
+                    EsMonedaLocal = m.EsMonedaLocal ?? false,
+                    Activo = m.Estado // Ajusta 'Estado' si tu entidad usa otro nombre
                 }).ToListAsync();
         }
 
         public async Task<IEnumerable<MonedaDto>> ObtenerActivasAsync()
         {
-            // Cambiar m.Activo según la propiedad real que use BasicEntity
             return await _context.Monedas
-                // .Where(m => m.Activo) 
+                .Where(m => m.Estado) // Filtro por activos
                 .Select(m => new MonedaDto
                 {
                     Id = m.Id,
                     Nombre = m.Nombre,
                     CodigoISO = m.CodigoIso,
                     Simbolo = m.Simbolo,
-                    EsMonedaLocal = m.EsMonedaLocal ?? false
+                    EsMonedaLocal = m.EsMonedaLocal ?? false,
+                    Activo = m.Estado
                 }).ToListAsync();
         }
 
@@ -97,7 +89,8 @@ namespace ImportCostPro.Application.Services
                 Nombre = moneda.Nombre,
                 CodigoISO = moneda.CodigoIso,
                 Simbolo = moneda.Simbolo,
-                EsMonedaLocal = moneda.EsMonedaLocal ?? false
+                EsMonedaLocal = moneda.EsMonedaLocal ?? false,
+                Activo = moneda.Estado
             };
         }
 
@@ -112,7 +105,8 @@ namespace ImportCostPro.Application.Services
                 Nombre = monedaLocal.Nombre,
                 CodigoISO = monedaLocal.CodigoIso,
                 Simbolo = monedaLocal.Simbolo,
-                EsMonedaLocal = monedaLocal.EsMonedaLocal ?? false
+                EsMonedaLocal = true,
+                Activo = monedaLocal.Estado
             };
         }
 
@@ -136,6 +130,7 @@ namespace ImportCostPro.Application.Services
             moneda.CodigoIso = dto.CodigoISO;
             moneda.Simbolo = dto.Simbolo;
             moneda.EsMonedaLocal = dto.EsMonedaLocal;
+            moneda.Estado = dto.Activo;
 
             _context.Monedas.Update(moneda);
             await _context.SaveChangesAsync();

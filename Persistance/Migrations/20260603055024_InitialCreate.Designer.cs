@@ -12,7 +12,7 @@ using Persistence.Contexts;
 namespace Persistance.Migrations
 {
     [DbContext(typeof(ImportCostProContext))]
-    [Migration("20260601232830_InitialCreate")]
+    [Migration("20260603055024_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -198,14 +198,17 @@ namespace Persistance.Migrations
                     b.Property<decimal>("Monto")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("OrdenImportacionID")
+                    b.Property<int>("OrdenImportacionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TipoGasto")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MonedaID");
 
-                    b.HasIndex("OrdenImportacionID");
+                    b.HasIndex("OrdenImportacionId");
 
                     b.ToTable("GastosImportacion", (string)null);
                 });
@@ -219,10 +222,12 @@ namespace Persistance.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Correo")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Direccion")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<bool>("Estado")
                         .ValueGeneratedOnAdd()
@@ -239,11 +244,12 @@ namespace Persistance.Migrations
 
                     b.Property<string>("RNC")
                         .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("nvarchar(3)");
+                        .HasMaxLength(21)
+                        .HasColumnType("nvarchar(21)");
 
                     b.Property<string>("Telefono")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
@@ -383,9 +389,11 @@ namespace Persistance.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal?>("Alto")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("Ancho")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("CategoriaArancelariaID")
@@ -393,11 +401,12 @@ namespace Persistance.Migrations
 
                     b.Property<string>("Codigo")
                         .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("nvarchar(3)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Descripcion")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("Estado")
                         .ValueGeneratedOnAdd()
@@ -405,6 +414,7 @@ namespace Persistance.Migrations
                         .HasDefaultValue(true);
 
                     b.Property<decimal?>("Largo")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Nombre")
@@ -630,7 +640,7 @@ namespace Persistance.Migrations
 
                     b.HasOne("Persistance.Entities.OrdenImportacion", "OrdenImportacion")
                         .WithMany("GastosImportacion")
-                        .HasForeignKey("OrdenImportacionID")
+                        .HasForeignKey("OrdenImportacionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

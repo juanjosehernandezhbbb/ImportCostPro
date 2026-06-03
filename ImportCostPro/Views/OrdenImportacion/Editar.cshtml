@@ -1,0 +1,103 @@
+﻿@model ImportCostPro.Application.DTOs.Ordenes.CrearOrdenDto
+@using Persistance.Enums
+
+@{
+    ViewData["Title"] = "Editar Orden";
+    var estadoOrden = (EstadoOrden)ViewBag.EstadoOrden;
+    bool esEditable = estadoOrden == EstadoOrden.Abierta;
+    var ordenId = ViewContext.RouteData.Values["id"];
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Editar Orden de Importación</h3>
+        <div>
+            <a asp-controller="GastoImportacion" asp-action="Index" asp-route-ordenId="@ordenId" class="btn btn-info me-2">Gestionar Gastos</a>
+            <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
+        </div>
+    </div>
+
+    @if (!esEditable)
+    {
+        <div class="alert alert-warning shadow-sm">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <strong>Orden Bloqueada:</strong> Esta orden se encuentra en estado <strong>@estadoOrden</strong>. 
+            No se permiten modificaciones en productos ni gastos.
+        </div>
+    }
+
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+    <form asp-action="Editar" method="post">
+        <input type="hidden" name="id" value="@ordenId" />
+        <fieldset @(esEditable ? "" : "disabled")>
+            <div class="card p-4 mb-4 shadow-sm">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Número de Orden</label>
+                        <input asp-for="NumeroOrden" class="form-control" />
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Fecha de Orden</label>
+                        <input asp-for="FechaOrden" type="date" class="form-control" />
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Modalidad</label>
+                        <select asp-for="ModalidadTransporte" asp-items="ViewBag.Modalidades" class="form-select"></select>
+                    </div>
+                </div>
+                @if (esEditable)
+                {
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">Guardar Cambios de Orden</button>
+                    </div>
+                }
+            </div>
+        </fieldset>
+    </form>
+
+    <div class="card p-4 shadow-sm">
+        <div class="d-flex justify-content-between mb-3">
+            <h5>Productos en la Orden</h5>
+            @if (esEditable) { 
+                <a asp-controller="DetalleOrden" asp-action="Crear" asp-route-ordenId="@ordenId" class="btn btn-success btn-sm">+ Agregar Producto</a> 
+            }
+        </div>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio FOB</th>
+                    <th>Total FOB</th>
+                    @if (esEditable) { <th>Acciones</th> }
+                </tr>
+            </thead>
+            <tbody>
+                @if (ViewBag.Detalles != null)
+                {
+                    @foreach (var item in ViewBag.Detalles)
+                    {
+                        <tr>
+                            <td>@item.NombreProducto</td>
+                            <td>@item.Cantidad</td>
+                            <td>@item.PrecioUnitarioFOB.ToString("C")</td>
+                            <td>@item.FobTotal.ToString("C")</td>
+                            @if (esEditable)
+                            {
+                                <td>
+                                    <div class="btn-group">
+                                        <a asp-controller="DetalleOrden" asp-action="Editar" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Editar</a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="abrirModalEliminar(@item.Id, '@ordenId')">Eliminar</button>
+                                    </div>
+                                </td>
+                            }
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@* ... (Mantiene el modal y el script que ya tenías) ... *@

@@ -1,24 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 using Persistance.Common;
 using Persistance.Enums;
-using Persistance.Entities;
-
 
 namespace Persistance.Entities
 {
-    public class GastoImportacion: BasicEntity<int>
+    public class GastoImportacion : BasicEntity<int>
     {
-        public required int OrdenImportacionID { get; set; }//fk
-        //public Importador OrdenImportacion { get; set; }
-        public required decimal Monto { get; set; }
-        public required DateTime FechaGasto { get; set; }
-        public required int MonedaID { get; set; }//fk
-        public Moneda Moneda { get; set; }
+        public int OrdenImportacionId { get; set; }
+
+        [ForeignKey(nameof(OrdenImportacionId))] // Usamos nameof para evitar errores de escritura
         public OrdenImportacion? OrdenImportacion { get; set; }
+
+        public decimal Monto { get; set; }
+        public DateTime FechaGasto { get; set; }
+
+        public int MonedaID { get; set; }
+
+        [ForeignKey("MonedaID")]
+        public Moneda? Moneda { get; set; }
+
         public MetodoDistribucion MetodoDistribucion { get; set; }
+        public TipoGasto TipoGasto { get; set; }
+
+        public bool Estado { get; set; }
     }
 }

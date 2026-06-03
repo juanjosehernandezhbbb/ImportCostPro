@@ -17,6 +17,8 @@ namespace ImportCostPro.Application.DTOs.Ordenes
         public DateTime FechaOrden { get; set; }
         public ModalidadTransporte ModalidadTransporte { get; set; }
 
+        public EstadoOrden EstadoOrden { get; set; }
+
         // NOTA: No pedimos Estado aquí, porque la regla de negocio dice que 
         // TODA orden nace como "Abierta" automáticamente.
     }

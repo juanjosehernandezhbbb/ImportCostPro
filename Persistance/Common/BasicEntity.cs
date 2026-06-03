@@ -8,7 +8,8 @@ namespace Persistance.Common
 {
     public class BasicEntity<TKey>
     {
-        public required TKey Id { get; set; }
-        public required bool Estado { get; set; }
+        public TKey Id { get; set; }
+
+        public bool Estado { get; set; } = true;
     }
 }

@@ -1,0 +1,32 @@
+﻿@model ImportCostPro.Application.DTOs.Proveedores.CrearProveedorDto
+<form asp-action="Crear" method="post" class="card p-4 shadow-sm border-0">
+    <div class="mb-3">
+        <label asp-for="Nombre" class="form-label"></label>
+        <input asp-for="Nombre" class="form-control" />
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">País de Origen</label>
+            <select asp-for="PaisOrigenID" class="form-select" asp-items="ViewBag.Paises"><option value="">-- Seleccione --</option></select>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Moneda</label>
+            <select asp-for="MonedaPrincipalID" class="form-select" asp-items="ViewBag.Monedas"><option value="">-- Seleccione --</option></select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="Correo" class="form-label"></label>
+            <input asp-for="Correo" class="form-control" />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="Telefono" class="form-label"></label>
+            <input asp-for="Telefono" class="form-control" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Direccion" class="form-label"></label>
+        <textarea asp-for="Direccion" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar Proveedor</button>
+</form>

@@ -1,0 +1,56 @@
+﻿@model ImportCostPro.Application.DTOs.DetallesOrden.AgregarProductoOrdenDto
+
+@{
+    ViewData["Title"] = "Editar Producto en Orden";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Editar Producto</h3>
+        <a asp-controller="OrdenImportacion" asp-action="Editar" asp-route-id="@Model.OrdenImportacionId" class="btn btn-secondary">Cancelar</a>
+    </div>
+
+    <div class="card p-4 shadow-sm">
+        @* Formulario apuntando directamente a la acción Editar del controlador *@
+        <form asp-controller="DetalleOrden" asp-action="Editar" method="post" id="formEditar">
+            
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="OrdenImportacionId" />
+            <input type="hidden" asp-for="ProductoId" />
+
+            <div class="mb-3">
+                <label class="form-label">Producto</label>
+                <select asp-for="ProductoId" asp-items="ViewBag.Productos" class="form-select" disabled></select>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Cantidad</label>
+                    <input asp-for="Cantidad" class="form-control" type="number" step="1" required />
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Precio FOB</label>
+                    <input asp-for="PrecioUnitarioFOB" class="form-control" type="number" step="0.01" required />
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Margen (%)</label>
+                    <input asp-for="MargenDeseado" class="form-control" type="number" step="0.01" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Descripción</label>
+                <textarea asp-for="Descripcion" class="form-control" rows="2"></textarea>
+            </div>
+
+            <div class="text-end">
+                @* Botón forzando el submit por JavaScript para evitar bloqueos de validación *@
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('formEditar').submit()">Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,70 +1,86 @@
-﻿@model IEnumerable<ImportCostPro.Models.ImportadorViewModel>
+﻿@model IEnumerable<ImportCostPro.Application.DTOs.Importadores.ImportadorDto>
 
-@{
-    ViewData["Title"] = "Mantenimiento de Importadores";
-}
+@{ ViewData["Title"] = "Mantenimiento de Importadores"; }
 
 <div class="container-fluid px-2">
+    @if (TempData["Success"] != null) { <div class="alert alert-success">@TempData["Success"]</div> }
+    @if (TempData["Error"] != null) { <div class="alert alert-danger">@TempData["Error"]</div> }
+
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-0 text-gray-800 fw-bold">Mantenimiento de Importadores</h1>
-            <p class="text-muted small mb-0">Gestión de las empresas o entidades locales que realizan las importaciones.</p>
-        </div>
-        <a asp-controller="Importador" asp-action="Crear" class="btn btn-primary shadow-sm">
-            <i class="bi bi-plus-circle-fill me-2"></i>Agregar Importador
-        </a>
+        <h1 class="h3 mb-0 text-gray-800 fw-bold">Mantenimiento de Importadores</h1>
+        <a asp-action="Crear" class="btn btn-primary shadow-sm"><i class="bi bi-plus-circle-fill me-2"></i>Agregar Importador</a>
     </div>
 
     <div class="card border-0 shadow-sm bg-white">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="ps-4">ID</th>
-                            <th>RNC / Identificación</th>
-                            <th>Razón Social</th>
-                            <th>Teléfono</th>
-                            <th>Contacto Principal</th>
-                            <th class="text-end pe-4">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model != null && Model.Any())
-                        {
-                            foreach (var importador in Model)
-                            {
-                                <tr>
-                                    <td class="ps-4 fw-bold text-muted">@importador.Id</td>
-                                    <td class="font-monospace">@importador.Rnc</td>
-                                    <td>@importador.RazonSocial</td>
-                                    <td>@importador.Telefono</td>
-                                    <td>@importador.Contacto</td>
-                                    <td class="text-end pe-4">
-                                        <div class="btn-group" role="group">
-                                            <a asp-controller="Importador" asp-action="Editar" asp-route-id="@importador.Id" class="btn btn-sm btn-outline-secondary">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </a>
-                                            <a asp-controller="Importador" asp-action="Eliminar" asp-route-id="@importador.Id" class="btn btn-sm btn-outline-danger">
-                                                <i class="bi bi-trash3-fill"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                        else
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">RNC</th>
+                        <th>Razón Social</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th class="text-end pe-4">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
                         {
                             <tr>
-                                <td colspan="6" class="text-center py-5 text-muted">
-                                    <i class="bi bi-building display-4 mb-3 d-block"></i>
-                                    No hay registros de importadores configurados en el sistema.
+                                <td class="ps-4 font-monospace">@item.RNC</td>
+                                <td>@item.NombreRazonSocial</td>
+                                <td>@item.Telefono</td>
+                                <td>@item.Correo</td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group">
+                                        <a asp-action="Editar" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil-square"></i></a>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="confirmarEliminar(@item.Id, '@item.NombreRazonSocial')">
+                                            <i class="bi bi-trash3-fill"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         }
-                    </tbody>
-                </table>
-            </div>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="bi bi-building-slash display-1 mb-3 d-block"></i>
+                                    <h5>No hay importadores registrados</h5>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modalEliminar" tabindex="-1">
+    <div class="modal-dialog">
+        <form asp-action="Eliminar" method="post">
+            <input type="hidden" name="id" id="importadorId" />
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title">Confirmar Eliminación</h5></div>
+                <div class="modal-body"><p>¿Seguro de eliminar a <b id="nombreImportador"></b>?</p></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function confirmarEliminar(id, nombre) {
+        document.getElementById('importadorId').value = id;
+        document.getElementById('nombreImportador').innerText = nombre;
+        new bootstrap.Modal(document.getElementById('modalEliminar')).show();
+    }
+</script>

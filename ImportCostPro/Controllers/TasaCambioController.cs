@@ -1,34 +1,105 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ImportCostPro.Models;
+﻿using ImportCostPro.Application.DTOs.TasasCambio;
+using ImportCostPro.Application.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Persistence.Contexts;
 
 namespace ImportCostPro.Web.Controllers
 {
     public class TasaCambioController : Controller
     {
-        public IActionResult Index()
-        {
-            var tasasSimuladas = new List<TasaCambioViewModel>
-            {
-                new TasaCambioViewModel { Id = 1, MonedaOrigenId = 2, CodigoMonedaOrigen = "USD", MonedaDestinoId = 1, CodigoMonedaDestino = "DOP", ValorTasa = 59.25m, Fecha = DateTime.Today },
-                new TasaCambioViewModel { Id = 2, MonedaOrigenId = 3, CodigoMonedaOrigen = "EUR", MonedaDestinoId = 1, CodigoMonedaDestino = "DOP", ValorTasa = 63.80m, Fecha = DateTime.Today }
-            };
+        private readonly ITasaCambioService _service;
+        private readonly ImportCostProContext _context;
 
-            return View(tasasSimuladas);
+        public TasaCambioController(ITasaCambioService service, ImportCostProContext context)
+        {
+            _service = service;
+            _context = context;
+        }
+
+        private void PrepararViewBag()
+        {
+            ViewBag.Monedas = new SelectList(_context.Monedas.ToList(), "Id", "Nombre");
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            return View(await _service.ObtenerTodasAsync());
         }
 
         public IActionResult Crear()
         {
+            PrepararViewBag();
             return View();
         }
 
-        public IActionResult Editar(int id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Crear(CrearTasaCambioDto dto)
         {
-            return View();
+            if (!ModelState.IsValid)
+            {
+                PrepararViewBag();
+                return View(dto);
+            }
+
+            try
+            {
+                await _service.CrearAsync(dto);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                PrepararViewBag();
+                return View(dto);
+            }
         }
 
-        public IActionResult Eliminar(int id)
+        public async Task<IActionResult> Editar(int id)
         {
-            return View();
+            var tasa = await _service.ObtenerPorIdAsync(id);
+            PrepararViewBag();
+            return View(tasa);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Editar(int id, CrearTasaCambioDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                PrepararViewBag();
+                return View(dto);
+            }
+
+            try
+            {
+                await _service.ActualizarAsync(id, dto);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                PrepararViewBag();
+                return View(dto);
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EliminarConfirmado(int id)
+        {
+            try
+            {
+                await _service.EliminarAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "No se pudo eliminar la tasa de cambio.";
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }

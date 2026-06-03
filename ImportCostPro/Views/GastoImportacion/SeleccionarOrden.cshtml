@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Seleccionar Orden";
+}
+
+<div class="container py-4">
+    <div class="card shadow-sm border-0" style="max-width: 500px; margin: auto;">
+        <div class="card-header bg-white py-3">
+            <h4 class="mb-0">Seleccionar Orden</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Crear" method="get">
+                <div class="mb-3">
+                    <label class="form-label">Orden de Importación:</label>
+                    <select name="ordenId" asp-items="ViewBag.Ordenes" class="form-select"></select>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Continuar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

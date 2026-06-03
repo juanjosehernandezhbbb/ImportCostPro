@@ -27,6 +27,15 @@ namespace Persistance.EntityConfiguration
             builder.HasIndex(x => x.Codigo)
             .IsUnique();
 
+            builder.Property(x => x.Alto)
+            .HasPrecision(18, 2);
+
+            builder.Property(x => x.Ancho)
+                .HasPrecision(18, 2);
+
+            builder.Property(x => x.Largo)
+                .HasPrecision(18, 2);
+
             builder.Property(x => x.Estado)
                 .IsRequired()
                 .HasDefaultValue(true);

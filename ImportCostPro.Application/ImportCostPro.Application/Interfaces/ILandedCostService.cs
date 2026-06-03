@@ -17,5 +17,7 @@ namespace ImportCostPro.Application.Interfaces
         // 2. Ejecuta el cálculo, guarda la "fotografía inmutable" en la base de datos (tablas ResultadoCalculo y DetalleCalculo)
         // y cambia el estado de la orden a "Calculada".
         Task<int> GuardarCalculoOficialAsync(int ordenId);
+
+        Task<IEnumerable<CalculoLandedCostDto>> ObtenerHistoricoCalculosAsync();
     }
 }

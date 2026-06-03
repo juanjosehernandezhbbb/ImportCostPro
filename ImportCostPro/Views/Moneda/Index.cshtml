@@ -5,6 +5,22 @@
 }
 
 <div class="container-fluid px-2">
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="h3 mb-0 text-gray-800 fw-bold">Mantenimiento de Monedas</h1>
@@ -22,8 +38,8 @@
                     <thead class="table-light">
                         <tr>
                             <th class="ps-4">ID</th>
-                            <th>Nombre de la Moneda</th>
-                            <th>Código (USD, DOP, etc.)</th>
+                            <th>Nombre</th>
+                            <th>Código</th>
                             <th>Símbolo</th>
                             <th>Moneda Base</th>
                             <th class="text-end pe-4">Acciones</th>
@@ -37,28 +53,29 @@
                                 <tr>
                                     <td class="ps-4 fw-bold text-muted">@moneda.Id</td>
                                     <td>@moneda.Nombre</td>
-                                    <td><span class="badge bg-secondary font-monospace px-2 py-1">@moneda.CodigoISO</span></td>
+                                    <td><span class="badge bg-secondary font-monospace">@moneda.CodigoISO</span></td>
                                     <td class="fw-bold">@moneda.Simbolo</td>
                                     <td>
-                                       <td>
-                                            @if (moneda.EsMonedaLocal) 
-                                            {
-                                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">Sí (Local)</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-light text-muted border px-2 py-1">No (Extranjera)</span>
-                                            }
-                                        </td>
+                                        @if (moneda.EsMonedaLocal)
+                                        {
+                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">Sí (Local)</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-light text-muted border">No (Extranjera)</span>
+                                        }
                                     </td>
                                     <td class="text-end pe-4">
                                         <div class="btn-group" role="group">
                                             <a asp-controller="Moneda" asp-action="Editar" asp-route-id="@moneda.Id" class="btn btn-sm btn-outline-secondary">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
-                                            <a asp-controller="Moneda" asp-action="Eliminar" asp-route-id="@moneda.Id" class="btn btn-sm btn-outline-danger">
+                                            <button type="button" class="btn btn-sm btn-outline-danger ms-1" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#deleteModal" 
+                                                    data-url="@Url.Action("Eliminar", "Moneda", new { id = moneda.Id })">
                                                 <i class="bi bi-trash3-fill"></i>
-                                            </a>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -79,3 +96,33 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar esta moneda? Esta acción no se puede deshacer.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="post">
+                    <button type="submit" class="btn btn-danger">Confirmar Eliminación</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var deleteModal = document.getElementById('deleteModal');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var url = button.getAttribute('data-url');
+        var form = document.getElementById('deleteForm');
+        form.setAttribute('action', url);
+    });
+</script>

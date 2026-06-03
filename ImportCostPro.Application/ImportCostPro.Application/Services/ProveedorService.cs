@@ -1,16 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using ImportCostPro.Application.DTOs.Proveedores;
-using ImportCostPro.Application.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using Persistence.Contexts;
-using Persistance.Entities;
-
-using ImportCostPro.Application.DTOs.Proveedores;
+﻿using ImportCostPro.Application.DTOs.Proveedores;
 using ImportCostPro.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Contexts;
@@ -29,7 +17,6 @@ namespace ImportCostPro.Application.Services
 
         public async Task<int> CrearAsync(CrearProveedorDto dto)
         {
-            // Cambiamos la validación para que no se repita el nombre del proveedor
             var existe = await _context.Set<Proveedor>().AnyAsync(p => p.Nombre.ToLower() == dto.Nombre.ToLower());
             if (existe) throw new Exception("Ya existe un proveedor registrado con este nombre.");
 
@@ -41,7 +28,7 @@ namespace ImportCostPro.Application.Services
                 Telefono = dto.Telefono,
                 Correo = dto.Correo,
                 Direccion = dto.Direccion,
-                PaisOrigenID = dto.PaisOrigenID, 
+                PaisOrigenID = dto.PaisOrigenID,
                 MonedaPrincipalID = dto.MonedaPrincipalID
             };
 
@@ -113,4 +100,3 @@ namespace ImportCostPro.Application.Services
         }
     }
 }
-

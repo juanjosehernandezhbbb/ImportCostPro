@@ -1,0 +1,41 @@
+﻿@model Persistance.Entities.ResultadoCalculo
+
+<div class="container py-4">
+    <h2>Detalle de Cálculo Oficial - Orden: @Model.OrdenImportacion.NumeroOrden</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <p><strong>Fecha:</strong> @Model.FechaCalculo.ToString("dd/MM/yyyy")</p>
+            <p><strong>Costo Total:</strong> @Model.CostoTotalImportacion.ToString("C")</p>
+        </div>
+    </div>
+
+    <table class="table table-bordered mt-3">
+        <thead class="table-light">
+            <tr>
+                <th>Producto</th>
+                <th>FOB</th>
+                <th>Arancel</th>
+                <th>ITBIS</th>
+                <th>Costo Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var det in Model.DetallesResultadoCalculo)
+            {
+                <tr>
+                    <td>@det.Producto.Nombre</td>
+                    <td>@det.CostoFOB.ToString("N2")</td>
+                    <td>@det.Arancel.ToString("N2")</td>
+                    <td>@det.ITBIS.ToString("N2")</td>
+                    <td>@det.CostoTotal.ToString("N2")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+<div class="mt-4 border-top pt-3">
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Volver al Listado de Histórico
+    </a>
+</div>
+</div>

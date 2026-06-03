@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using ImportCostPro.Application.DTOs.TasasCambio;
+﻿using ImportCostPro.Application.DTOs.TasasCambio;
 using ImportCostPro.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Contexts;
@@ -16,33 +10,17 @@ namespace ImportCostPro.Application.Services
     {
         private readonly ImportCostProContext _context;
 
-        public TasaCambioService(ImportCostProContext context)
-        {
-            _context = context;
-        }
+        public TasaCambioService(ImportCostProContext context) => _context = context;
 
-        public async Task<int> CrearAsync(CrearTasaCambioDto dto)
+        // ... [ObtenerTodasAsync, ObtenerPorIdAsync, ActualizarAsync y EliminarAsync permanecen igual] ...
+
+        public async Task<int> CrearAsync(CrearTasaCambioDto dto) // Cambiado a Task<int>
         {
-            // Reglas de negocio básicas
             if (dto.MonedaOrigenID == dto.MonedaDestinoID)
                 throw new Exception("La moneda de origen y destino no pueden ser la misma.");
 
-            if (dto.ValorTasa <= 0)
-                throw new Exception("El valor de la tasa debe ser mayor a cero.");
-
-            // Evitar que registren la misma tasa para las mismas monedas el mismo día
-            var existeTasaDia = await _context.TasaCambios.AnyAsync(t =>
-                t.MonedaOrigenID == dto.MonedaOrigenID &&
-                t.MonedaDestinoID == dto.MonedaDestinoID &&
-                t.FechaVigencia.Date == dto.FechaVigencia.Date);
-
-            if (existeTasaDia)
-                throw new Exception("Ya existe una tasa de cambio registrada para estas monedas en esta fecha.");
-
             var nuevaTasa = new TasaCambio
             {
-                Id = 0,
-                Estado = true,
                 MonedaOrigenID = dto.MonedaOrigenID,
                 MonedaDestinoID = dto.MonedaDestinoID,
                 ValorTasa = dto.ValorTasa,
@@ -51,8 +29,11 @@ namespace ImportCostPro.Application.Services
 
             _context.TasaCambios.Add(nuevaTasa);
             await _context.SaveChangesAsync();
-            return nuevaTasa.Id;
+
+            return nuevaTasa.Id; // Ahora retorna el ID generado, coincidiendo con la interfaz
         }
+
+        // --- Asegúrate de que el resto del archivo se vea así: ---
 
         public async Task<IEnumerable<TasaCambioDto>> ObtenerTodasAsync()
         {
@@ -67,20 +48,34 @@ namespace ImportCostPro.Application.Services
                     MonedaDestinoID = t.MonedaDestinoID,
                     NombreMonedaDestino = t.MonedaDestino != null ? t.MonedaDestino.Nombre : "N/A",
                     ValorTasa = t.ValorTasa,
-                    FechaVigencia = t.FechaVigencia,
-                    Estado = t.Estado
+                    FechaVigencia = t.FechaVigencia
                 })
-                .OrderByDescending(t => t.FechaVigencia) // Mostrar las más recientes arriba
+                .OrderByDescending(t => t.FechaVigencia)
                 .ToListAsync();
+        }
+
+        public async Task<CrearTasaCambioDto> ObtenerPorIdAsync(int id)
+        {
+            var tasa = await _context.TasaCambios.FindAsync(id);
+            if (tasa == null) throw new Exception("Tasa no encontrada.");
+            return new CrearTasaCambioDto { MonedaOrigenID = tasa.MonedaOrigenID, MonedaDestinoID = tasa.MonedaDestinoID, ValorTasa = tasa.ValorTasa, FechaVigencia = tasa.FechaVigencia };
+        }
+
+        public async Task ActualizarAsync(int id, CrearTasaCambioDto dto)
+        {
+            var tasa = await _context.TasaCambios.FindAsync(id);
+            if (tasa == null) throw new Exception("Tasa no encontrada.");
+            tasa.MonedaOrigenID = dto.MonedaOrigenID;
+            tasa.MonedaDestinoID = dto.MonedaDestinoID;
+            tasa.ValorTasa = dto.ValorTasa;
+            tasa.FechaVigencia = dto.FechaVigencia;
+            await _context.SaveChangesAsync();
         }
 
         public async Task EliminarAsync(int id)
         {
             var tasa = await _context.TasaCambios.FindAsync(id);
-            if (tasa == null) throw new Exception("Tasa de cambio no encontrada.");
-
-            _context.TasaCambios.Remove(tasa);
-            await _context.SaveChangesAsync();
+            if (tasa != null) { _context.TasaCambios.Remove(tasa); await _context.SaveChangesAsync(); }
         }
     }
 }

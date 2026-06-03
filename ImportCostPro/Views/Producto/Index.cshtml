@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ImportCostPro.Models.ProductoViewModel>
+﻿@model IEnumerable<ImportCostPro.Application.DTOs.Producto.ProductoDto>
 
 @{
     ViewData["Title"] = "Mantenimiento de Productos";
@@ -8,12 +8,20 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="h3 mb-0 text-gray-800 fw-bold">Mantenimiento de Productos</h1>
-            <p class="text-muted small mb-0">Gestión del catálogo de artículos disponibles para órdenes de compra e importación.</p>
+            <p class="text-muted small mb-0">Gestión del catálogo de productos importados.</p>
         </div>
         <a asp-controller="Producto" asp-action="Crear" class="btn btn-primary shadow-sm">
             <i class="bi bi-plus-circle-fill me-2"></i>Agregar Producto
         </a>
     </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
 
     <div class="card border-0 shadow-sm bg-white">
         <div class="card-body p-0">
@@ -23,8 +31,11 @@
                         <tr>
                             <th class="ps-4">ID</th>
                             <th>Código</th>
-                            <th>Descripción / Artículo</th>
-                            <th>Detalles</th>
+                            <th>Nombre</th>
+                            <th>País Origen</th>
+                            <th>Categoría</th>
+                            <th>Unidad</th>
+                            <th>Peso Unit.</th>
                             <th>Estado</th>
                             <th class="text-end pe-4">Acciones</th>
                         </tr>
@@ -32,42 +43,67 @@
                     <tbody>
                         @if (Model != null && Model.Any())
                         {
-                            foreach (var producto in Model)
+                            foreach (var p in Model)
                             {
                                 <tr>
-                                    <td class="ps-4 fw-bold text-muted">@producto.Id</td>
-                                    <td><span class="badge bg-secondary font-monospace px-2 py-1">@producto.Codigo</span></td>
-                                    <td class="fw-bold text-dark">@producto.Nombre</td>
-                                    <td class="text-muted small text-truncate" style="max-width: 300px;">@producto.Descripcion</td>
+                                    <td class="ps-4 fw-bold text-muted">@p.Id</td>
+                                    <td><code>@p.Codigo</code></td>
+                                    <td>@p.Nombre</td>
+                                    <td>@p.NombrePaisOrigen</td>
+                                    <td>@p.DescripcionCategoria</td>
+                                    <td>@p.UnidadDeMedidaID</td>
+                                    <td>@p.PesoUnitario kg</td>
                                     <td>
-                                        @if (producto.Activo)
+                                        @if (p.Estado)
                                         {
-                                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Disponible</span>
+                                            <span class="badge bg-success">Activo</span>
                                         }
                                         else
                                         {
-                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">Descontinuado</span>
+                                            <span class="badge bg-secondary">Inactivo</span>
                                         }
                                     </td>
                                     <td class="text-end pe-4">
                                         <div class="btn-group" role="group">
-                                            <a asp-controller="Producto" asp-action="Editar" asp-route-id="@producto.Id" class="btn btn-sm btn-outline-secondary">
+                                            <a asp-controller="Producto" asp-action="Editar" asp-route-id="@p.Id" class="btn btn-sm btn-outline-secondary">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
-                                            <a asp-controller="Producto" asp-action="Eliminar" asp-route-id="@producto.Id" class="btn btn-sm btn-outline-danger">
+                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                                    data-bs-toggle="modal" data-bs-target="#deleteModal-@p.Id">
                                                 <i class="bi bi-trash3-fill"></i>
-                                            </a>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
+
+                                <div class="modal fade" id="deleteModal-@p.Id" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Confirmar eliminación</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                ¿Estás seguro de eliminar <strong>@p.Nombre</strong> (@p.Codigo)?
+                                                Esta acción no se puede deshacer.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                <form asp-controller="Producto" asp-action="EliminarConfirmado" asp-route-id="@p.Id" method="post" style="display:inline;">
+                                                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             }
                         }
                         else
                         {
                             <tr>
-                                <td colspan="6" class="text-center py-5 text-muted">
+                                <td colspan="9" class="text-center py-5 text-muted">
                                     <i class="bi bi-box-seam display-4 mb-3 d-block"></i>
-                                    No hay registros de productos configurados en el sistema.
+                                    No hay productos registrados en el sistema.
                                 </td>
                             </tr>
                         }

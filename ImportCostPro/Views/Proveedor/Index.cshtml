@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ImportCostPro.Models.ProveedorViewModel>
+﻿@model IEnumerable<ImportCostPro.Application.DTOs.Proveedores.ProveedorDto>
 
 @{
     ViewData["Title"] = "Mantenimiento de Proveedores";
@@ -23,7 +23,7 @@
                         <tr>
                             <th class="ps-4">ID</th>
                             <th>Nombre / Razón Social</th>
-                            <th>País de Origen</th>
+                            <th>País (ID)</th>
                             <th>Correo Electrónico</th>
                             <th>Teléfono</th>
                             <th class="text-end pe-4">Acciones</th>
@@ -37,7 +37,7 @@
                                 <tr>
                                     <td class="ps-4 fw-bold text-muted">@proveedor.Id</td>
                                     <td>@proveedor.Nombre</td>
-                                    <td>@proveedor.NombrePais</td>
+                                    <td>@proveedor.PaisOrigenID</td>
                                     <td>@proveedor.Correo</td>
                                     <td>@proveedor.Telefono</td>
                                     <td class="text-end pe-4">
@@ -45,12 +45,33 @@
                                             <a asp-controller="Proveedor" asp-action="Editar" asp-route-id="@proveedor.Id" class="btn btn-sm btn-outline-secondary">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
-                                            <a asp-controller="Proveedor" asp-action="Eliminar" asp-route-id="@proveedor.Id" class="btn btn-sm btn-outline-danger">
+                                            
+                                            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@proveedor.Id">
                                                 <i class="bi bi-trash3-fill"></i>
-                                            </a>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
+
+                                <div class="modal fade" id="deleteModal-@proveedor.Id" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Confirmar eliminación</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                ¿Estás seguro de eliminar a <strong>@proveedor.Nombre</strong>? Esta acción no se puede deshacer.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                <form asp-controller="Proveedor" asp-action="EliminarConfirmado" asp-route-id="@proveedor.Id" method="post" style="display:inline;">
+                                                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             }
                         }
                         else

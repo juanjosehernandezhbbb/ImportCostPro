@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using ImportCostPro.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -23,30 +22,30 @@ namespace ImportCostPro.Application.Services
 
         public async Task<int> AgregarGastoAsync(AgregarGastoDto dto)
         {
-            // 1. Buscamos la orden
-            var orden = await _context.OrdenesImportacion.FindAsync(dto.OrdenImportacionID);
+            // 1. Verificamos la orden sin cargar el objeto de navegación completo si no es necesario
+            var orden = await _context.OrdenesImportacion.AsNoTracking().FirstOrDefaultAsync(o => o.Id == dto.OrdenImportacionId);
+
             if (orden == null) throw new Exception("La orden de importación no existe.");
 
-            // 2. REGLA DE NEGOCIO ESTRICTA: Validar estado de la orden
             if (orden.estado != EstadoOrden.Abierta)
             {
                 throw new Exception($"No se pueden registrar gastos en una orden que está en estado {orden.estado}.");
             }
 
-            // 3. Crear el gasto
+            // 2. Creamos la entidad
             var nuevoGasto = new GastoImportacion
             {
-                Id = 0,             // Para calmar al BasicEntity
-                Estado = true,      // Para calmar al BasicEntity
-                OrdenImportacionID = dto.OrdenImportacionID,
+                OrdenImportacionId = dto.OrdenImportacionId,
                 MonedaID = dto.MonedaID,
                 Monto = dto.Monto,
                 FechaGasto = dto.FechaGasto,
-
-                // TipoGasto = dto.TipoGasto, // <- Descomentar si Persona 1 ya lo agregó a la entidad
-                MetodoDistribucion = dto.MetodoDistribucion
+                TipoGasto = dto.TipoGasto,
+                MetodoDistribucion = dto.MetodoDistribucion,
+                Estado = true
             };
 
+            // 3. Importante: Al no asignar el objeto 'nuevoGasto.OrdenImportacion = orden', 
+            // evitamos que EF intente gestionar una relación que ya está resuelta por el ID.
             _context.GastosImportacion.Add(nuevoGasto);
             await _context.SaveChangesAsync();
 
@@ -56,19 +55,21 @@ namespace ImportCostPro.Application.Services
         public async Task<IEnumerable<GastoImportacionDto>> ObtenerPorOrdenIdAsync(int ordenId)
         {
             return await _context.GastosImportacion
+                .AsNoTracking() // Optimización para lectura
                 .Include(g => g.Moneda)
-                .Where(g => g.OrdenImportacionID == ordenId)
+                .Where(g => g.OrdenImportacionId == ordenId)
                 .Select(g => new GastoImportacionDto
                 {
                     Id = g.Id,
-                    OrdenImportacionID = g.OrdenImportacionID,
+                    OrdenImportacionId = g.OrdenImportacionId,
                     MonedaID = g.MonedaID,
                     NombreMoneda = g.Moneda!.Nombre,
                     SimboloMoneda = g.Moneda!.Simbolo,
                     Monto = g.Monto,
                     FechaGasto = g.FechaGasto,
-                    // TipoGasto = g.TipoGasto, // <- Descomentar si Persona 1 ya lo agregó a la entidad
-                    MetodoDistribucion = g.MetodoDistribucion
+                    TipoGasto = g.TipoGasto,
+                    MetodoDistribucion = g.MetodoDistribucion,
+                    Estado = g.Estado
                 })
                 .ToListAsync();
         }
@@ -81,7 +82,6 @@ namespace ImportCostPro.Application.Services
 
             if (gasto == null) throw new Exception("Gasto no encontrado.");
 
-            // REGLA DE NEGOCIO: Validar estado de la orden antes de permitir la edición
             if (gasto.OrdenImportacion!.estado != EstadoOrden.Abierta)
             {
                 throw new Exception($"No se pueden modificar los gastos porque la orden ya está {gasto.OrdenImportacion.estado}.");
@@ -90,10 +90,10 @@ namespace ImportCostPro.Application.Services
             gasto.MonedaID = dto.MonedaID;
             gasto.Monto = dto.Monto;
             gasto.FechaGasto = dto.FechaGasto;
-            // gasto.TipoGasto = dto.TipoGasto; // <- Descomentar si Persona 1 ya lo agregó
+            gasto.TipoGasto = dto.TipoGasto;
             gasto.MetodoDistribucion = dto.MetodoDistribucion;
+            gasto.Estado = true;
 
-            _context.GastosImportacion.Update(gasto);
             await _context.SaveChangesAsync();
         }
 
@@ -105,7 +105,6 @@ namespace ImportCostPro.Application.Services
 
             if (gasto == null) throw new Exception("Gasto no encontrado.");
 
-            // REGLA DE NEGOCIO: Validar estado de la orden antes de borrar
             if (gasto.OrdenImportacion!.estado != EstadoOrden.Abierta)
             {
                 throw new Exception($"No se pueden eliminar gastos porque la orden ya está {gasto.OrdenImportacion.estado}.");

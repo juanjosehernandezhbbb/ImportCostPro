@@ -22,8 +22,26 @@ namespace ImportCostPro.Application.Services
             _context = context;
         }
 
+        // --- PÉGALO AQUÍ (Línea 24 aproximadamente) ---
+        public async Task<IEnumerable<CalculoLandedCostDto>> ObtenerHistoricoCalculosAsync()
+        {
+            return await _context.ResultadosCalculo
+                .Include(c => c.OrdenImportacion)
+                .OrderByDescending(c => c.FechaCalculo)
+                .Select(c => new CalculoLandedCostDto
+                {
+                    Id = c.Id,
+                    NumeroOrden = c.OrdenImportacion.NumeroOrden,
+                    FechaCalculo = c.FechaCalculo,
+                    TotalCosto = c.CostoTotalImportacion
+                })
+                .ToListAsync();
+        }
+        // ----------------------------------------------
+
         public async Task<ResultadoCalculoDto> PrevisualizarCalculoAsync(int ordenId)
         {
+            // ... resto de tu código
             // 1. OBTENER LA ORDEN CON TODOS SUS DATOS
             var orden = await _context.OrdenesImportacion
                 .Include(o => o.DetallesOrden!)
